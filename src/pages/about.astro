@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About — Brian Lee" activeNav="about">
+
+  <div class="page-title">
+    <h1>About</h1>
+  </div>
+
+  <div class="about-body">
+    <div class="about-photo">
+      <img src="/assets/brian-portrait.jpg" alt="Brian Lee at Frieze Week" />
+    </div>
+    <div class="about-text">
+      <p>I am Soo Hyung Brian Lee (이수형), a human being from South Korea, and currently residing in Brooklyn, NY. I indulge in creations made by fellow humans, some with function and utility and some completely without.</p>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+  .about-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 3rem 1.25rem 5rem;
+  }
+
+  .about-photo {
+    width: 200px;
+    flex-shrink: 0;
+  }
+
+  .about-photo img {
+    width: 200px;
+    height: 267px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .about-text {
+    width: 200px;
+    flex-shrink: 0;
+  }
+
+  .about-text p {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    line-height: 1.85;
+    color: var(--dim);
+    text-align: right;
+  }
+</style>

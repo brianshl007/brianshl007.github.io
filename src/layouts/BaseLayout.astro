@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Show project-style nav (wordmark + back link) instead of home-style nav */
+  back?: boolean;
+  /** Label for the back link — defaults to '← All Work' */
+  backLabel?: string;
+  /** Which home-nav link gets the active class */
+  activeNav?: 'works' | 'about' | 'jeeps';
+  /** Extra class(es) on <body> for page theming: 'project-page' | 'jeep-page' | '' */
+  bodyClass?: string;
+  /** Set false on project detail pages that supply their own bottom nav */
+  showFooter?: boolean;
+  footerLeft?: string;
+  footerRight?: string;
+}
+
+const {
+  title,
+  description = 'Brian Lee — portfolio',
+  back = false,
+  backLabel = '← All Work',
+  activeNav,
+  bodyClass = '',
+  showFooter = true,
+  footerLeft = 'Brian Lee',
+  footerRight = '© 2026',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body class={bodyClass}>
+
+  {back ? (
+    <nav class="project-nav">
+      <a class="wordmark" href="/">Brian Lee</a>
+      <div style="display:flex;align-items:center;gap:1.5rem;">
+        <a class="back" href="/">{backLabel}</a>
+        <a href="/jeeps" class="nav-jeep-link">
+          <img src="/assets/blue-jeep-1.jpg" alt="Blue Jeeps" onerror="this.style.display='none'" />
+        </a>
+      </div>
+    </nav>
+  ) : (
+    <nav>
+      <a class="nav-name" href="/">Brian Lee</a>
+      <ul class="nav-links">
+        <li><a href="/" class={activeNav === 'works' ? 'active' : undefined}>Works</a></li>
+        <li><a href="/about" class={activeNav === 'about' ? 'active' : undefined}>About</a></li>
+        <li><a href="/jeeps" class={activeNav === 'jeeps' ? 'active' : undefined}>Jeeps</a></li>
+        <li>
+          <a href="/jeeps" class="nav-jeep-link">
+            <img src="/assets/blue-jeep-1.jpg" alt="Blue Jeeps" onerror="this.style.display='none'" />
+          </a>
+        </li>
+      </ul>
+    </nav>
+  )}
+
+  <slot />
+
+  {showFooter && (
+    <footer>
+      <span>{footerLeft}</span>
+      <span>{footerRight}</span>
+    </footer>
+  )}
+
+</body>
+</html>
