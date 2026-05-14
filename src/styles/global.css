@@ -1,0 +1,188 @@
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── TOKENS ─── */
+:root {
+  /* Home / About palette */
+  --bg: #ffffff;
+  --ink: #111111;
+  --dim: #888888;
+  --faint: #e8e8e8;
+  --blue: #2d5fa6;
+
+  /* Project & jeep page palette (active when body.project-page / body.jeep-page) */
+  --ink-dim: #7a7568;
+  --ink-faint: #c4bfb4;
+
+  /* Jeep archive extras */
+  --blue-mid: #4a7bc4;
+  --blue-dim: #7096c8;
+  --blue-faint: #d4e0f0;
+  --blue-bg: #eef3fa;
+
+  /* Type stacks */
+  --mono: 'DM Mono', 'Courier New', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* ─── BASE ─── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── PROJECT DETAIL THEME ─── */
+body.project-page {
+  --bg: #f5f3ef;
+  --ink: #18160f;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ─── JEEP ARCHIVE THEME ─── */
+body.jeep-page {
+  --bg: #f4f3f0;
+  --ink: #18160f;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ─── NAV — shared base ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: var(--bg);
+}
+
+/* Home / About nav */
+.nav-name {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-links a {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--ink); }
+
+/* Project / jeep nav overrides */
+nav.project-nav {
+  align-items: baseline;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--ink-faint);
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.back {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.back:hover { color: var(--ink); }
+
+/* Jeep thumbnail in nav (appears in both nav variants) */
+.nav-jeep-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.nav-jeep-link:hover { opacity: 1; }
+
+.nav-jeep-link img {
+  height: 22px;
+  width: 36px;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+  background: #dce8f5;
+}
+
+/* ─── PAGE TITLE (home & about) ─── */
+.page-title {
+  padding: 4.5rem 1.25rem 1.5rem;
+}
+
+.page-title h1 {
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--faint);
+  display: flex;
+  justify-content: space-between;
+}
+
+footer span {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: #cccccc;
+}
+
+/* Jeep archive footer override */
+body.jeep-page footer {
+  padding: 1.25rem 2rem;
+  border-top: 1px solid var(--blue-faint);
+  background: var(--blue-bg);
+}
+
+body.jeep-page footer span {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue-dim);
+}

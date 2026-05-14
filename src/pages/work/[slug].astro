@@ -1,0 +1,295 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('projects');
+  const sorted = [...entries].sort((a, b) => a.data.order - b.data.order);
+
+  return sorted.map((entry, i) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: {
+      entry,
+      prev: sorted[i - 1] ?? null,
+      next: sorted[i + 1] ?? null,
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content } = await render(entry);
+const { title, description, heroImage, meta, gallery } = entry.data;
+
+// Gallery layout: ≤3 images → single row; >3 → wrap at 3 cols
+const galleryColClass = !gallery
+  ? ''
+  : gallery.length === 2
+    ? 'gallery-pair'
+    : gallery.length === 3
+      ? 'gallery-trio'
+      : 'gallery-multi';
+---
+
+<BaseLayout
+  title={`${title} — Brian Lee`}
+  description={description}
+  back={true}
+  bodyClass="project-page"
+  showFooter={false}
+>
+
+  <!-- HERO -->
+  <header class="project-hero">
+    <h1>{title}</h1>
+    {meta && (
+      <div class="project-hero-meta">
+        {meta.map(({ label, value }) => (
+          <div class="meta-group">
+            <span class="meta-label">{label}</span>
+            <span class="meta-value">{value}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </header>
+
+  <!-- LEAD IMAGE -->
+  {heroImage && (
+    <div class="img-wrap">
+      <img class="lead-image" src={heroImage} alt={title} />
+    </div>
+  )}
+
+  <!-- BODY TEXT -->
+  <div class="text-section">
+    <div class="section-label">Overview</div>
+    <div class="section-body">
+      <Content />
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  {gallery && gallery.length > 0 && (
+    <div class="gallery-wrap">
+      <div class={`gallery ${galleryColClass}`}>
+        {gallery.map(({ src, alt }) => (
+          <div class="img-wrap">
+            <img src={src} alt={alt} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- PROJECT NAV -->
+  <div class="project-nav">
+    {prev ? (
+      <a class="prev-project" href={`/work/${prev.id.replace(/\.md$/, '')}`}>
+        <span class="prev-label">Previous</span>
+        <span class="prev-title">← {prev.data.title}</span>
+      </a>
+    ) : (
+      <a href="/">← All Work</a>
+    )}
+    {next ? (
+      <a class="next-project" href={`/work/${next.id.replace(/\.md$/, '')}`}>
+        <span class="next-label">Next</span>
+        <span class="next-title">{next.data.title} →</span>
+      </a>
+    ) : (
+      <a href="/">All Work →</a>
+    )}
+  </div>
+
+</BaseLayout>
+
+<style>
+  /* ─── HERO ─── */
+  .project-hero {
+    padding: 7rem 2.5rem 4rem;
+    border-bottom: 1px solid var(--ink-faint);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+  }
+
+  .project-hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  .project-hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .meta-group .meta-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .meta-group .meta-value {
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  /* ─── IMAGES ─── */
+  .img-wrap {
+    overflow: hidden;
+  }
+
+  .img-wrap img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .img-wrap:hover img { transform: scale(1.03); }
+
+  .lead-image {
+    height: 72vh;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ─── TEXT SECTION ─── */
+  .text-section {
+    padding: 5rem 2.5rem;
+    border-bottom: 1px solid var(--ink-faint);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding-top: 0.4rem;
+    position: sticky;
+    top: 5rem;
+  }
+
+  .section-body :global(p) {
+    font-size: 1.1rem;
+    line-height: 1.78;
+    max-width: 62ch;
+    margin-bottom: 1.4rem;
+  }
+
+  .section-body :global(p:last-child) { margin-bottom: 0; }
+
+  /* ─── GALLERY ─── */
+  .gallery-wrap {
+    padding: 0 2.5rem;
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .gallery {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+  }
+
+  .gallery-pair  { grid-template-columns: 1fr 1fr; }
+  .gallery-trio  { grid-template-columns: 1fr 1fr 1fr; }
+  .gallery-multi { grid-template-columns: repeat(3, 1fr); }
+
+  .gallery .img-wrap img { height: 45vh; }
+
+  /* ─── PROJECT NAV ─── */
+  .project-nav {
+    padding: 3rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .project-nav a {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .project-nav a:hover { color: var(--ink); }
+
+  .prev-project,
+  .next-project {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    text-decoration: none;
+  }
+
+  .next-project { align-items: flex-end; }
+
+  .prev-label,
+  .next-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .prev-title,
+  .next-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .project-hero {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      padding: 6rem 1.5rem 3rem;
+    }
+
+    .text-section {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 4rem 1.5rem;
+    }
+
+    .section-label { position: static; }
+
+    .gallery-wrap { padding: 0 1.5rem; }
+    .gallery-pair,
+    .gallery-trio,
+    .gallery-multi { grid-template-columns: 1fr; }
+    .gallery .img-wrap img { height: 55vw; }
+
+    .lead-image { height: 55vw; }
+
+    .project-nav {
+      flex-direction: column;
+      gap: 2rem;
+      align-items: flex-start;
+      padding: 2.5rem 1.5rem;
+    }
+  }
+</style>
